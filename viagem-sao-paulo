@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Roteiro São Paulo · 26–28 set 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F6F3ED;
+    --paper-2:#EFEBE2;
+    --ink:#221F1B;
+    --ink-soft:#5B564D;
+    --line:#DCD5C6;
+    --red:#B3402F;
+    --day1:#215C46;
+    --day1-tint:#E4EEE8;
+    --day2:#1E4B85;
+    --day2-tint:#E3EAF3;
+    --day3:#966425;
+    --day3-tint:#F1E7D6;
+    --radius:14px;
+    --shadow:0 1px 0 rgba(34,31,27,.06);
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;
+    line-height:1.45;
+    padding-bottom:64px;
+  }
+  .wrap{max-width:640px; margin:0 auto; padding:0 16px;}
+
+  /* ---------- Header ---------- */
+  header.hero{
+    background:var(--ink); color:var(--paper);
+    padding:22px 16px 20px;
+  }
+  header.hero .eyebrow{
+    font-family:'Space Mono',monospace; font-size:12px; letter-spacing:.02em;
+    color:#C9C2B3; margin:0 0 6px;
+  }
+  header.hero h1{
+    font-family:'Space Grotesk',sans-serif; font-weight:700;
+    font-size:26px; line-height:1.15; margin:0 0 10px; max-width:420px;
+  }
+  header.hero .hotel-line{
+    display:flex; align-items:flex-start; gap:8px; font-size:14px; color:#E8E4D9;
+    border-top:1px solid #3A362F; padding-top:12px; margin-top:12px;
+  }
+  header.hero .hotel-line a{color:inherit; text-decoration:underline; text-decoration-color:#6B665B;}
+  .hero-actions{display:flex; gap:8px; margin-top:14px; flex-wrap:wrap;}
+  .btn-ics{
+    font-family:'Space Mono',monospace; font-size:12.5px; color:var(--ink); background:var(--paper);
+    border:none; border-radius:999px; padding:9px 14px; cursor:pointer; font-weight:700;
+    display:inline-flex; align-items:center; gap:6px;
+  }
+  .btn-ics:active{transform:scale(.97);}
+
+  /* ---------- Day tabs (sticky) ---------- */
+  .day-tabs{
+    position:sticky; top:0; z-index:20; background:var(--paper);
+    border-bottom:1px solid var(--line);
+    display:flex; gap:0; padding:10px 16px 0;
+  }
+  .day-tab{
+    flex:1; text-align:center; padding:10px 4px 12px; cursor:pointer;
+    border:none; background:transparent; font-family:'Space Grotesk',sans-serif;
+    font-weight:600; font-size:13.5px; color:var(--ink-soft); position:relative;
+  }
+  .day-tab .d{display:block; font-family:'Space Mono',monospace; font-weight:400; font-size:11px; margin-top:2px; opacity:.75;}
+  .day-tab::after{
+    content:""; position:absolute; left:8px; right:8px; bottom:0; height:3px; border-radius:3px 3px 0 0;
+    background:transparent;
+  }
+  .day-tab.active{color:var(--ink);}
+  .day-tab.active[data-day="1"]::after{background:var(--day1);}
+  .day-tab.active[data-day="2"]::after{background:var(--day2);}
+  .day-tab.active[data-day="3"]::after{background:var(--day3);}
+
+  /* ---------- Filters ---------- */
+  .filters{
+    display:flex; gap:6px; overflow-x:auto; padding:12px 16px; scrollbar-width:none;
+  }
+  .filters::-webkit-scrollbar{display:none;}
+  .chip{
+    flex:0 0 auto; font-family:'Inter'; font-size:12.5px; font-weight:600; color:var(--ink-soft);
+    background:var(--paper-2); border:1px solid var(--line); border-radius:999px; padding:6px 12px;
+    cursor:pointer; white-space:nowrap;
+  }
+  .chip.active{background:var(--ink); color:var(--paper); border-color:var(--ink);}
+
+  /* ---------- Day panel ---------- */
+  .day-panel{display:none;}
+  .day-panel.active{display:block;}
+  .day-banner{
+    margin:2px 16px 4px; padding:12px 14px; border-radius:var(--radius);
+    display:flex; align-items:center; gap:10px;
+  }
+  .day-banner .emoji{font-size:22px;}
+  .day-banner h2{font-family:'Space Grotesk',sans-serif; font-size:16px; margin:0; font-weight:700;}
+  .day-banner p{margin:1px 0 0; font-size:12.5px; color:var(--ink-soft);}
+  [data-day="1"] .day-banner{background:var(--day1-tint);}
+  [data-day="2"] .day-banner{background:var(--day2-tint);}
+  [data-day="3"] .day-banner{background:var(--day3-tint);}
+
+  /* ---------- Timeline ---------- */
+  .timeline{padding:10px 16px 4px; position:relative;}
+  .timeline::before{
+    content:""; position:absolute; left:57px; top:6px; bottom:6px; width:1px; background:var(--line);
+  }
+  .item{
+    display:flex; gap:12px; padding:12px 0; border-bottom:1px dashed var(--line);
+  }
+  .item:last-child{border-bottom:none;}
+  .item .time{
+    flex:0 0 46px; font-family:'Space Mono',monospace; font-size:12px; font-weight:700; color:var(--ink);
+    padding-top:2px; text-align:right;
+  }
+  .item .time span{display:block; font-weight:400; color:var(--ink-soft); font-size:10.5px;}
+  .item .dot{
+    flex:0 0 18px; display:flex; justify-content:center; padding-top:4px; position:relative; z-index:1;
+  }
+  .item .dot i{
+    width:9px; height:9px; border-radius:50%; display:block; background:var(--ink-soft);
+  }
+  [data-day="1"] .item .dot i{background:var(--day1);}
+  [data-day="2"] .item .dot i{background:var(--day2);}
+  [data-day="3"] .item .dot i{background:var(--day3);}
+  .item .content{flex:1; min-width:0;}
+  .item h3{
+    font-family:'Space Grotesk',sans-serif; font-size:14.5px; font-weight:600; margin:0 0 3px;
+    display:flex; align-items:center; gap:6px; flex-wrap:wrap;
+  }
+  .item .icon{font-size:15px;}
+  .item .desc{font-size:13px; color:var(--ink-soft); margin:0 0 8px; white-space:pre-line;}
+  .item .tags{display:flex; gap:6px; flex-wrap:wrap; align-items:center;}
+  .tag{
+    font-size:11px; font-weight:700; font-family:'Space Mono',monospace;
+    padding:3px 8px; border-radius:999px; background:var(--paper-2); color:var(--ink-soft);
+  }
+  .link-btn{
+    font-size:11.5px; font-weight:600; text-decoration:none; color:var(--ink);
+    background:#fff; border:1px solid var(--line); border-radius:999px; padding:4px 10px;
+    display:inline-flex; align-items:center; gap:4px;
+  }
+  .link-btn:active{background:var(--paper-2);}
+
+  /* ---------- Tips / transports ---------- */
+  .box{margin:14px 16px; padding:14px; border-radius:var(--radius); background:#fff; border:1px solid var(--line);}
+  .box h4{font-family:'Space Grotesk',sans-serif; font-size:13px; margin:0 0 8px; display:flex; align-items:center; gap:6px;}
+  .box ul{margin:0; padding-left:18px; font-size:13px; color:var(--ink-soft);}
+  .box ul li{margin-bottom:4px;}
+  .transports{display:flex; flex-wrap:wrap; gap:8px; font-size:12.5px; color:var(--ink-soft);}
+  .transports span{background:var(--paper-2); border-radius:999px; padding:5px 10px;}
+
+  /* ---------- Footer ---------- */
+  footer{padding:22px 16px 30px; text-align:center;}
+  footer .grid{display:grid; grid-template-columns:1fr; gap:14px; text-align:left; margin-bottom:18px;}
+  footer .box{margin:0;}
+  footer .signoff{font-family:'Space Grotesk',sans-serif; font-size:15px; color:var(--red); font-weight:700;}
+  .hidden{display:none !important;}
+
+  @media(min-width:560px){
+    footer .grid{grid-template-columns:1fr 1fr;}
+    header.hero h1{font-size:30px;}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap" style="padding:0;">
+    <p class="eyebrow">ROTEIRO · 26–28 DE SETEMBRO DE 2026</p>
+    <h1>3 dias em São Paulo</h1>
+    <div class="hotel-line">
+      📍 <span>Hotel — <a href="#" class="maps-link" data-loc="Rua Epitácio Pessoa, 97, República, São Paulo">Rua Epitácio Pessoa, 97 – República</a></span>
+    </div>
+    <div class="hero-actions">
+      <button class="btn-ics" id="downloadIcs">⬇ Baixar roteiro (.ics)</button>
+    </div>
+  </div>
+</header>
+
+<nav class="day-tabs">
+  <button class="day-tab active" data-day="1">Liberdade <span class="d">SÁB 26/09</span></button>
+  <button class="day-tab" data-day="2">Paulista <span class="d">DOM 27/09</span></button>
+  <button class="day-tab" data-day="3">Centro <span class="d">SEG 28/09</span></button>
+</nav>
+
+<div class="filters">
+  <button class="chip active" data-cat="all">Tudo</button>
+  <button class="chip" data-cat="transporte">🚗 Transporte</button>
+  <button class="chip" data-cat="turismo">🏛️ Turismo</button>
+  <button class="chip" data-cat="comida">🍽️ Comida</button>
+  <button class="chip" data-cat="compras">🛍️ Compras</button>
+</div>
+
+<main class="wrap" style="padding:0;">
+  <div id="panels"></div>
+</main>
+
+<footer>
+  <div class="wrap" style="padding:0;">
+    <div class="grid">
+      <div class="box">
+        <h4>🧳 O que levar</h4>
+        <ul><li>Roupas leves e confortáveis</li><li>Tênis</li><li>Protetor solar</li><li>Garrafa de água</li><li>Câmera</li></ul>
+      </div>
+      <div class="box">
+        <h4>❤️ Dica extra</h4>
+        <ul><li>Aproveite cada momento e experimente a diversidade de São Paulo.</li></ul>
+      </div>
+    </div>
+    <p class="signoff">Boa viagem! 🤍</p>
+  </div>
+</footer>
+
+<script>
+const trip = [
+  {
+    day:1, date:"2026-09-26", city:"Liberdade", emoji:"⛩️",
+    banner:"Cultura japonesa, torii e comércio oriental",
+    items:[
+      {time:"07:40", icon:"✈️", cat:"transporte", title:"Chegada em GRU", desc:"", loc:"Aeroporto Internacional de São Paulo–Guarulhos (GRU)"},
+      {time:"08:30", end:"09:30", icon:"🚗", cat:"transporte", title:"GRU → Hotel", desc:"Deixar malas", tag:"UBER", loc:"Rua Epitácio Pessoa, 97, República, São Paulo"},
+      {time:"10:00", icon:"🚇", cat:"transporte", title:"Hotel → Liberdade", desc:"", tag:"METRÔ", loc:"Estação Liberdade, São Paulo"},
+      {time:"10:30", end:"12:30", icon:"🚶", cat:"turismo", title:"Explorar Liberdade", desc:"Praça da Liberdade\nRua Galvão Bueno\nLojas orientais", tag:"A PÉ", loc:"Praça da Liberdade, São Paulo"},
+      {time:"12:30", end:"14:00", icon:"🍜", cat:"comida", title:"Almoço na Liberdade", desc:"Sugestões: Porque Sim, Lamen Kazu, Tanka", loc:"Rua Galvão Bueno, Liberdade, São Paulo"},
+      {time:"14:00", end:"17:00", icon:"🍡", cat:"compras", title:"Continuar o passeio", desc:"Rua dos Estudantes\nRua dos Aflitos\nCafés, doces, mercados", tag:"A PÉ", loc:"Rua dos Estudantes, Liberdade, São Paulo"},
+      {time:"17:00", end:"18:00", icon:"🚗", cat:"transporte", title:"Liberdade → Hotel", desc:"", tag:"UBER", loc:"Rua Epitácio Pessoa, 97, República, São Paulo"},
+      {time:"Noite", icon:"🍽️", cat:"comida", title:"Jantar próximo ao hotel", desc:"E descanso", loc:"República, São Paulo"}
+    ],
+    tips:["Use roupas e calçados confortáveis.","Leve garrafa de água.","Muitos comércios abrem até tarde, mas chegue cedo para aproveitar."],
+    transports:["🚗 Uber: aeroporto, Liberdade → Hotel","🚇 Metrô: Hotel → Liberdade","🚶 A pé: Liberdade toda"]
+  },
+  {
+    day:2, date:"2026-09-27", city:"Avenida Paulista", emoji:"🏙️",
+    banner:"Museus, caminhada e a avenida mais famosa do Brasil",
+    items:[
+      {time:"09:00", icon:"🚇", cat:"transporte", title:"Hotel → Paulista", desc:"", tag:"METRÔ", loc:"Avenida Paulista, São Paulo"},
+      {time:"09:30", end:"12:00", icon:"🖼️", cat:"turismo", title:"MASP", desc:"Museu de Arte de São Paulo\nIngressos: masp.org.br\nAbre 10h às 18h", tag:"A PÉ", loc:"MASP - Museu de Arte de São Paulo"},
+      {time:"12:00", end:"13:30", icon:"🍽️", cat:"comida", title:"Almoço", desc:"Sugestão: A Baianera (no MASP) ou região", tag:"A PÉ", loc:"Avenida Paulista, São Paulo"},
+      {time:"13:30", end:"16:00", icon:"🚶", cat:"turismo", title:"Caminhada pela Paulista", desc:"Trianon · FIESP · Japan House\nItaú Cultural · Casa das Rosas", tag:"A PÉ", loc:"Parque Trianon, Avenida Paulista, São Paulo"},
+      {time:"16:00", icon:"☕", cat:"comida", title:"Café / descanso", desc:"", tag:"A PÉ", loc:"Avenida Paulista, São Paulo"},
+      {time:"17:00", icon:"🚗", cat:"transporte", title:"Jardins / Rua Oscar Freire", desc:"Passeio e lojas", tag:"UBER", loc:"Rua Oscar Freire, São Paulo"},
+      {time:"Noite", icon:"🍽️", cat:"comida", title:"Jantar + Hotel", desc:"", tag:"UBER", loc:"Rua Epitácio Pessoa, 97, República, São Paulo"}
+    ],
+    tips:["Paulista fechada para veículos aos domingos – ideal para caminhar.","Use protetor solar e leve água.","Metrô funciona das 4h40 à 0h00."],
+    transports:["🚇 Metrô: Hotel → Paulista e retorno","🚗 Uber: Paulista → Jardins / Hotel","🚶 A pé: Paulista toda"]
+  },
+  {
+    day:3, date:"2026-09-28", city:"Centro Histórico + Mercadão", emoji:"⛪",
+    banner:"Praça da Sé, mirante e Mercado Municipal antes do embarque",
+    items:[
+      {time:"08:30", icon:"☕", cat:"comida", title:"Café + saída", desc:"Deixar malas no hotel", loc:"Rua Epitácio Pessoa, 97, República, São Paulo"},
+      {time:"09:00", icon:"⛪", cat:"turismo", title:"Praça da Sé + Catedral", desc:"Visita externa", tag:"A PÉ", loc:"Praça da Sé, São Paulo"},
+      {time:"10:00", icon:"🏛️", cat:"turismo", title:"Centro Histórico", desc:"Pátio do Colégio · CCBB · Região histórica", tag:"A PÉ", loc:"Pátio do Colégio, São Paulo"},
+      {time:"10:30", icon:"🗼", cat:"turismo", title:"Farol Santander", desc:"Vista panorâmica (abre 9h às 19h)", tag:"A PÉ", loc:"Farol Santander, São Paulo"},
+      {time:"12:00", icon:"🌳", cat:"turismo", title:"Viaduto do Chá + Vale do Anhangabaú", desc:"", tag:"A PÉ", loc:"Viaduto do Chá, São Paulo"},
+      {time:"13:00", icon:"🏛️", cat:"comida", title:"Mercado Municipal", desc:"Almoço · Abre 6h às 18h", tag:"A PÉ / UBER", loc:"Mercado Municipal de São Paulo"},
+      {time:"15:00", icon:"🛍️", cat:"compras", title:"Rua 25 de Março (opcional)", desc:"Compras e lembrancinhas", tag:"A PÉ", loc:"Rua 25 de Março, São Paulo"},
+      {time:"16:00", end:"17:00", icon:"🚗", cat:"transporte", title:"Voltar ao hotel", desc:"Pegar malas", tag:"UBER", loc:"Rua Epitácio Pessoa, 97, República, São Paulo"},
+      {time:"18:00", icon:"🚗", cat:"transporte", title:"Hotel → GRU", desc:"", tag:"UBER", loc:"Aeroporto Internacional de São Paulo–Guarulhos (GRU)"},
+      {time:"19:30", end:"20:00", icon:"🛬", cat:"transporte", title:"Chegada ao aeroporto", desc:"Fazer check-in", loc:"Aeroporto Internacional de São Paulo–Guarulhos (GRU)"},
+      {time:"22:25", icon:"✈️", cat:"transporte", title:"GRU → Vitória", desc:"Boa viagem!", loc:"Aeroporto Internacional de São Paulo–Guarulhos (GRU)"}
+    ],
+    tips:["Segunda é um ótimo dia para o Centro (MASP fechado).","Mercadão fecha às 18h – programe-se.","Saia com antecedência para o aeroporto (trânsito!)."],
+    transports:["🚇/🚗 Metrô/Uber: Centro Histórico","🚗 Uber: Hotel → GRU","🚶 A pé: passeios no Centro"]
+  }
+];
+
+const panelsEl = document.getElementById("panels");
+let activeCat = "all";
+
+function mapsUrl(loc){
+  return "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(loc);
+}
+function toIcsDate(dateStr, timeStr){
+  if(!/^\d{2}:\d{2}$/.test(timeStr)) return null;
+  return dateStr.replace(/-/g,"") + "T" + timeStr.replace(":","") + "00";
+}
+function addHour(timeStr){
+  let [h,m] = timeStr.split(":").map(Number);
+  h = (h+1) % 24;
+  return String(h).padStart(2,"0") + ":" + String(m).padStart(2,"0");
+}
+function gcalUrl(dateStr, item){
+  const start = toIcsDate(dateStr, item.time);
+  if(!start) return null;
+  const endTime = item.end && /^\d{2}:\d{2}$/.test(item.end) ? item.end : addHour(item.time);
+  const end = toIcsDate(dateStr, endTime);
+  const params = new URLSearchParams({
+    action:"TEMPLATE",
+    text: item.title,
+    dates: start + "/" + end,
+    details: item.desc || "",
+    location: item.loc || ""
+  });
+  return "https://calendar.google.com/calendar/render?" + params.toString();
+}
+
+function render(){
+  panelsEl.innerHTML = trip.map(day => `
+    <section class="day-panel ${day.day===1 ? 'active':''}" data-day="${day.day}">
+      <div class="day-banner">
+        <span class="emoji">${day.emoji}</span>
+        <div><h2>${day.city}</h2><p>${day.banner}</p></div>
+      </div>
+      <div class="timeline">
+        ${day.items.map(it => itemHtml(day, it)).join("")}
+      </div>
+      <div class="box">
+        <h4>✅ Dicas do dia</h4>
+        <ul>${day.tips.map(t=>`<li>${t}</li>`).join("")}</ul>
+      </div>
+      <div class="box">
+        <h4>🚦 Transportes principais</h4>
+        <div class="transports">${day.transports.map(t=>`<span>${t}</span>`).join("")}</div>
+      </div>
+    </section>
+  `).join("");
+
+  document.querySelectorAll(".maps-link").forEach(el=>{
+    el.addEventListener("click", e=>{
+      e.preventDefault();
+      window.open(mapsUrl(el.dataset.loc), "_blank");
+    });
+  });
+  applyFilter();
+}
+
+function itemHtml(day, it){
+  const gurl = gcalUrl(day.date, it);
+  return `
+    <div class="item" data-cat="${it.cat}">
+      <div class="time">${it.time}${it.end ? `<span>–${it.end}</span>`:""}</div>
+      <div class="dot"><i></i></div>
+      <div class="content">
+        <h3><span class="icon">${it.icon}</span>${it.title}</h3>
+        ${it.desc ? `<p class="desc">${it.desc}</p>` : ""}
+        <div class="tags">
+          ${it.tag ? `<span class="tag">${it.tag}</span>` : ""}
+          ${it.loc ? `<a class="link-btn" href="${mapsUrl(it.loc)}" target="_blank" rel="noopener">📍 Ver no mapa</a>` : ""}
+          ${gurl ? `<a class="link-btn" href="${gurl}" target="_blank" rel="noopener">🗓️ Agendar</a>` : ""}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function applyFilter(){
+  document.querySelectorAll(".item").forEach(el=>{
+    el.classList.toggle("hidden", activeCat!=="all" && el.dataset.cat!==activeCat);
+  });
+}
+
+document.querySelectorAll(".day-tab").forEach(tab=>{
+  tab.addEventListener("click", ()=>{
+    document.querySelectorAll(".day-tab").forEach(t=>t.classList.remove("active"));
+    document.querySelectorAll(".day-panel").forEach(p=>p.classList.remove("active"));
+    tab.classList.add("active");
+    document.querySelector(`.day-panel[data-day="${tab.dataset.day}"]`).classList.add("active");
+  });
+});
+
+document.querySelectorAll(".chip").forEach(chip=>{
+  chip.addEventListener("click", ()=>{
+    document.querySelectorAll(".chip").forEach(c=>c.classList.remove("active"));
+    chip.classList.add("active");
+    activeCat = chip.dataset.cat;
+    applyFilter();
+  });
+});
+
+document.getElementById("downloadIcs").addEventListener("click", ()=>{
+  let ics = "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Roteiro Sao Paulo//PT-BR\r\n";
+  trip.forEach(day=>{
+    day.items.forEach(it=>{
+      const start = toIcsDate(day.date, it.time);
+      if(!start) return;
+      const endTime = it.end && /^\d{2}:\d{2}$/.test(it.end) ? it.end : addHour(it.time);
+      const end = toIcsDate(day.date, endTime);
+      ics += "BEGIN:VEVENT\r\n";
+      ics += "SUMMARY:" + it.title + "\r\n";
+      ics += "DTSTART:" + start + "\r\n";
+      ics += "DTEND:" + end + "\r\n";
+      if(it.loc) ics += "LOCATION:" + it.loc + "\r\n";
+      if(it.desc) ics += "DESCRIPTION:" + it.desc.replace(/\n/g,"\\n") + "\r\n";
+      ics += "END:VEVENT\r\n";
+    });
+  });
+  ics += "END:VCALENDAR\r\n";
+  const blob = new Blob([ics], {type:"text/calendar"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = "roteiro-sao-paulo.ics";
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+});
+
+render();
+</script>
+</body>
+</html>
