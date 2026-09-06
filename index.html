@@ -30,18 +30,20 @@
     margin:0; background:var(--paper); color:var(--ink);
     font-family:'Inter',system-ui,sans-serif;
     line-height:1.45;
-    padding-bottom:64px;
+    padding-bottom:88px;
     transition:background .2s,color .2s;
   }
   body.dark{
     --paper:#12181F; --paper-2:#1C2530; --ink:#EDF1F5; --ink-soft:#9AABBB; --line:#2E3946;
     --day1-tint:#17273A; --day2-tint:#332A15; --day3-tint:#152738;
   }
-  body.dark .box, body.dark .link-btn, body.dark .btn-action{background:#1C2530;}
+  body.dark .box, body.dark .link-btn, body.dark .btn-action, body.dark .filters-wrap, body.dark .item{background:#1C2530;}
   .wrap{max-width:640px; margin:0 auto; padding:0 16px;}
 
-  /* ---------- Barra de utilidades ---------- */
+  /* ---------- Barra de utilidades (topo, zona própria) ---------- */
   .util-bar{
+    position:sticky; top:0; z-index:20; background:var(--paper-2);
+    border-bottom:1px solid var(--line);
     display:flex; align-items:center; justify-content:space-between; gap:8px;
     padding:10px 16px; font-size:13.5px; font-weight:600; color:var(--ink-soft);
   }
@@ -70,30 +72,32 @@
   }
   .btn-ics:active{transform:scale(.97);}
 
-  /* ---------- Day tabs (sticky) ---------- */
+  /* ---------- Barra de navegação inferior (dias) ---------- */
   .day-tabs{
-    position:sticky; top:0; z-index:20; background:var(--paper);
-    border-bottom:1px solid var(--line);
-    display:flex; gap:0; padding:14px 16px 0;
+    position:fixed; left:0; right:0; bottom:0; z-index:30; background:var(--paper);
+    border-top:1px solid var(--line);
+    display:flex; gap:0; padding:8px 8px calc(8px + env(safe-area-inset-bottom));
+    box-shadow:0 -2px 10px rgba(27,36,48,.08);
   }
   .day-tab{
-    flex:1; text-align:center; padding:10px 4px 14px; cursor:pointer;
+    flex:1; text-align:center; padding:8px 4px; cursor:pointer; border-radius:12px;
     border:none; background:transparent; font-family:'Poppins',sans-serif;
-    font-weight:700; font-size:17px; color:var(--ink-soft); position:relative;
+    font-weight:700; font-size:14px; color:var(--ink-soft); position:relative;
   }
-  .day-tab .d{display:block; font-family:'Inter',sans-serif; font-weight:400; font-size:13px; margin-top:3px; opacity:.8;}
-  .day-tab::after{
-    content:""; position:absolute; left:8px; right:8px; bottom:0; height:3px; border-radius:3px 3px 0 0;
-    background:transparent;
-  }
+  .day-tab .d{display:block; font-family:'Inter',sans-serif; font-weight:400; font-size:11.5px; margin-top:2px; opacity:.8;}
   .day-tab.active{color:var(--ink);}
-  .day-tab.active[data-day="1"]::after{background:var(--day1);}
-  .day-tab.active[data-day="2"]::after{background:var(--day2);}
-  .day-tab.active[data-day="3"]::after{background:var(--day3);}
+  .day-tab.active[data-day="1"]{background:var(--day1-tint);}
+  .day-tab.active[data-day="2"]{background:var(--day2-tint);}
+  .day-tab.active[data-day="3"]{background:var(--day3-tint);}
 
   /* ---------- Filters ---------- */
+  .filters-wrap{margin:12px 16px 4px; padding:12px; border-radius:var(--radius); background:#fff; border:1px solid var(--line);}
+  .section-label{
+    font-family:'Inter',sans-serif; font-size:11.5px; font-weight:700; letter-spacing:.08em;
+    text-transform:uppercase; color:var(--ink-soft); margin:0 0 8px; display:block;
+  }
   .filters{
-    display:flex; flex-wrap:wrap; gap:8px; padding:12px 16px;
+    display:flex; flex-wrap:wrap; gap:8px;
   }
   .chip{
     flex:0 0 auto; font-family:'Inter'; font-size:14.5px; font-weight:600; color:var(--ink-soft);
@@ -117,62 +121,86 @@
   [data-day="2"] .day-banner{background:var(--day2-tint);}
   [data-day="3"] .day-banner{background:var(--day3-tint);}
 
-  /* ---------- Timeline ---------- */
-  .timeline{padding:10px 16px 4px; position:relative;}
-  .timeline::before{
-    content:""; position:absolute; left:57px; top:6px; bottom:6px; width:1px; background:var(--line);
-  }
+  /* ---------- Timeline (cartões por horário) ---------- */
+  .timeline{padding:6px 16px 4px; display:flex; flex-direction:column; gap:10px;}
   .item{
-    display:flex; gap:12px; padding:12px 0;
+    display:flex; gap:12px; padding:14px; background:#fff; border:1px solid var(--line); border-radius:var(--radius);
   }
-  .item:last-child{border-bottom:none;}
-  .item.done .content{opacity:.4;}
+  .item.done{opacity:.5;}
   .item.done h3{text-decoration:line-through;}
-  .item.is-now{background:var(--paper-2); border-radius:10px; margin:0 -8px; padding:12px 8px;}
-  .item.is-now h3::before{content:"🔴 AGORA · "; color:var(--red); font-size:12px; font-family:'Inter',sans-serif; font-weight:700;}
-  .item.is-next h3::before{content:"⏭ A SEGUIR · "; color:var(--ink-soft); font-size:12px; font-family:'Inter',sans-serif; font-weight:700;}
-  .item .dot{
-    flex:0 0 18px; display:flex; justify-content:center; padding-top:6px; position:relative; z-index:1;
-    border:none; background:none; cursor:pointer;
+  .item.is-now{border-color:var(--red); border-width:2px; padding:13px;}
+  .item.is-now h3::before{content:"🔴 AGORA"; display:inline-block; color:#fff; background:var(--red); border-radius:6px; padding:1px 7px; font-size:10.5px; font-family:'Inter',sans-serif; font-weight:700; margin-right:4px;}
+  .item.is-next h3::before{content:"A SEGUIR"; display:inline-block; color:var(--ink-soft); background:var(--paper-2); border-radius:6px; padding:1px 7px; font-size:10.5px; font-family:'Inter',sans-serif; font-weight:700; margin-right:4px;}
+  .item .time-badge{
+    flex:0 0 auto; font-family:'Inter',sans-serif; font-size:13px; font-weight:700; color:#fff;
+    background:var(--ink-soft); border-radius:8px; padding:6px 10px; text-align:center; min-width:58px;
+    font-variant-numeric:tabular-nums; align-self:flex-start; margin-top:1px; cursor:pointer;
   }
-  .item .dot i{
-    width:10px; height:10px; border-radius:50%; display:block; background:var(--ink-soft);
-  }
-  .item.done .dot i{background:#8a8a8a;}
-  .item .time{
-    flex:0 0 58px; font-family:'Inter',sans-serif; font-size:15px; font-weight:700; color:var(--ink);
-    padding-top:2px; text-align:right; font-variant-numeric:tabular-nums;
-  }
-  .item .time span{display:block; font-weight:400; color:var(--ink-soft); font-size:12.5px;}
-  [data-day="1"] .item .dot i{background:var(--day1);}
-  [data-day="2"] .item .dot i{background:var(--day2);}
-  [data-day="3"] .item .dot i{background:var(--day3);}
+  .item .time-badge small{display:block; font-weight:400; opacity:.85; font-size:11px;}
+  [data-day="1"] .item .time-badge{background:var(--day1);}
+  [data-day="2"] .item .time-badge{background:var(--day2);}
+  [data-day="3"] .item .time-badge{background:var(--day3);}
+  .item.done .time-badge{background:#9AA7B2 !important;}
   .item .content{flex:1; min-width:0;}
   .item h3{
-    font-family:'Poppins',sans-serif; font-size:18px; font-weight:700; margin:0 0 4px;
-    display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+    font-family:'Poppins',sans-serif; font-size:17px; font-weight:700; margin:0 0 4px;
+    display:flex; align-items:center; gap:7px; flex-wrap:wrap;
   }
-  .item .icon{font-size:19px;}
-  .item .desc{font-size:15px; color:var(--ink-soft); margin:0 0 10px; white-space:pre-line;}
-  .item .tags{display:flex; gap:8px; flex-wrap:wrap; align-items:center;}
+  .item .icon{font-size:18px;}
+  .item .desc{font-size:14.5px; color:var(--ink-soft); margin:0 0 10px; white-space:pre-line;}
+  .item .tags{
+    display:grid !important; grid-template-columns:repeat(2, 1fr); gap:8px !important;
+    padding-top:10px; border-top:1px dashed var(--line);
+  }
+  .tags .tag{grid-column:1 / -1; justify-self:start; margin-bottom:-2px;}
+
+  /* ---------- Componentes: selo e botão de link ---------- */
   .tag{
     font-size:12.5px; font-weight:700; font-family:'Inter',sans-serif;
     padding:4px 9px; border-radius:999px; background:var(--paper-2); color:var(--ink-soft);
   }
   .link-btn{
     font-size:13.5px; font-weight:600; text-decoration:none; color:var(--ink);
-    background:#fff; border:1px solid var(--line); border-radius:999px; padding:6px 12px;
-    display:inline-flex; align-items:center; gap:5px;
+    background:var(--paper); border:1px solid var(--line); border-radius:999px; padding:6px 12px;
+    display:inline-flex; align-items:center; gap:5px; justify-content:center; text-align:center;
   }
   .link-btn:active{background:var(--paper-2);}
 
-  /* ---------- Tips / transports ---------- */
+  /* ---------- Componente .box (resumo, rodapé) ---------- */
   .box{margin:14px 16px; padding:14px; border-radius:var(--radius); background:#fff; border:1px solid var(--line);}
   .box h4{font-family:'Poppins',sans-serif; font-size:15.5px; margin:0 0 9px; display:flex; align-items:center; gap:6px;}
   .box ul{margin:0; padding-left:20px; font-size:15px; color:var(--ink-soft);}
   .box ul li{margin-bottom:5px;}
-  .transports{display:flex; flex-wrap:wrap; gap:8px; font-size:14px; color:var(--ink-soft);}
+
+  /* ---------- Acordeão: dicas + transporte ---------- */
+  .info-accordion{margin:14px 16px; border-radius:var(--radius); background:#fff; border:1px solid var(--line); overflow:hidden;}
+  .info-accordion summary{
+    font-family:'Poppins',sans-serif; font-size:15px; font-weight:700; padding:14px; cursor:pointer;
+    list-style:none; display:flex; align-items:center; justify-content:space-between;
+  }
+  .info-accordion summary::-webkit-details-marker{display:none;}
+  .info-accordion summary::after{content:"▾"; color:var(--ink-soft); transition:transform .15s;}
+  .info-accordion[open] summary::after{transform:rotate(180deg);}
+  .info-accordion .acc-body{padding:0 14px 14px;}
+  .info-accordion h5{font-family:'Poppins',sans-serif; font-size:13px; margin:12px 0 7px; color:var(--ink-soft);}
+  .info-accordion h5:first-child{margin-top:0;}
+  .info-accordion ul{margin:0; padding-left:20px; font-size:14.5px; color:var(--ink-soft);}
+  .info-accordion ul li{margin-bottom:5px;}
+  .transports{display:flex; flex-wrap:wrap; gap:8px; font-size:13.5px; color:var(--ink-soft);}
   .transports span{background:var(--paper-2); border-radius:999px; padding:5px 10px;}
+
+  /* ---------- Ações de dia: PDF / imagem (secundárias, no fim do dia) ---------- */
+  .day-actions{
+    display:grid; grid-template-columns:1fr 1fr; gap:10px;
+    margin:0 16px 20px;
+  }
+  .btn-action{
+    font-family:'Inter'; font-size:13px; font-weight:600; color:var(--ink-soft);
+    background:transparent; border:1px dashed var(--line); border-radius:12px;
+    padding:10px 8px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;
+    text-align:center;
+  }
+  .btn-action:active{background:var(--paper-2);}
 
   /* ---------- Footer ---------- */
   footer{padding:22px 16px 30px; text-align:center;}
@@ -185,28 +213,10 @@
     footer .grid{grid-template-columns:1fr 1fr;}
   }
 
-  /* ---------- Ações de dia: PDF / imagem ---------- */
-  .day-actions{
-    display:grid; grid-template-columns:1fr 1fr; gap:10px;
-    margin:0 16px 14px;
-  }
-  .btn-action{
-    font-family:'Inter'; font-size:13.5px; font-weight:700; color:var(--ink);
-    background:#fff; border:1px solid var(--line); border-radius:12px;
-    padding:11px 8px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;
-    text-align:center;
-  }
-  .btn-action:active{background:var(--paper-2);}
-
-  /* ---------- Grade simétrica de botões por item ---------- */
-  .tags{display:grid !important; grid-template-columns:repeat(2, 1fr); gap:8px !important; margin-top:2px;}
-  .tags .tag{grid-column:1 / -1; justify-self:start;}
-  .link-btn{justify-content:center; text-align:center;}
-
   @media print{
-    .day-tabs, .filters, .day-actions, footer{display:none !important;}
+    .day-tabs, .util-bar, .filters-wrap, .day-actions, footer{display:none !important;}
     body{padding-bottom:0; background:#fff;}
-    .box{border:1px solid #ccc;}
+    .item, .info-accordion{border:1px solid #ccc;}
   }
 </style>
 </head>
@@ -227,23 +237,26 @@
   </div>
 </div>
 
-<nav class="day-tabs">
-  <button class="day-tab active" data-day="1">Liberdade <span class="d">SÁB 26/09</span></button>
-  <button class="day-tab" data-day="2">Paulista <span class="d">DOM 27/09</span></button>
-  <button class="day-tab" data-day="3">Centro <span class="d">SEG 28/09</span></button>
-</nav>
-
-<div class="filters">
-  <button class="chip active" data-cat="all">Tudo</button>
-  <button class="chip" data-cat="transporte">🚗 Transporte</button>
-  <button class="chip" data-cat="turismo">🏛️ Turismo</button>
-  <button class="chip" data-cat="comida">🍽️ Comida</button>
-  <button class="chip" data-cat="compras">🛍️ Compras</button>
+<div class="filters-wrap">
+  <span class="section-label">Filtrar atividades</span>
+  <div class="filters">
+    <button class="chip active" data-cat="all">Tudo</button>
+    <button class="chip" data-cat="transporte">🚗 Transporte</button>
+    <button class="chip" data-cat="turismo">🏛️ Turismo</button>
+    <button class="chip" data-cat="comida">🍽️ Comida</button>
+    <button class="chip" data-cat="compras">🛍️ Compras</button>
+  </div>
 </div>
 
 <main class="wrap" style="padding:0;">
   <div id="panels"></div>
 </main>
+
+<nav class="day-tabs">
+  <button class="day-tab active" data-day="1">⛩️ Liberdade <span class="d">SÁB 26/09</span></button>
+  <button class="day-tab" data-day="2">🏙️ Paulista <span class="d">DOM 27/09</span></button>
+  <button class="day-tab" data-day="3">⛪ Centro <span class="d">SEG 28/09</span></button>
+</nav>
 
 <footer>
   <div class="wrap" style="padding:0;">
@@ -373,20 +386,26 @@ function render(){
         <span class="emoji">${day.emoji}</span>
         <div><h2>${day.city}</h2><p>${day.banner}</p><span class="weather" id="weather-${day.day}">🌤 previsão carregando…</span></div>
       </div>
-      <div class="day-actions">
-        <button class="btn-action" onclick="printDay()">🖨️ Gerar PDF</button>
-        <button class="btn-action" onclick="downloadJpeg(${day.day})">🖼️ Gerar imagem</button>
-      </div>
+
+      <span class="section-label" style="margin:14px 16px 4px; display:block;">Programação do dia</span>
       <div class="timeline">
         ${day.items.map(it => itemHtml(day, it)).join("")}
       </div>
-      <div class="box">
-        <h4>✅ Dicas do dia</h4>
-        <ul>${day.tips.map(t=>`<li>${t}</li>`).join("")}</ul>
-      </div>
-      <div class="box">
-        <h4>🚦 Transportes principais</h4>
-        <div class="transports">${day.transports.map(t=>`<span>${t}</span>`).join("")}</div>
+
+      <details class="info-accordion">
+        <summary>ℹ️ Informações do dia</summary>
+        <div class="acc-body">
+          <h5>✅ Dicas</h5>
+          <ul>${day.tips.map(t=>`<li>${t}</li>`).join("")}</ul>
+          <h5>🚦 Transportes principais</h5>
+          <div class="transports">${day.transports.map(t=>`<span>${t}</span>`).join("")}</div>
+        </div>
+      </details>
+
+      <span class="section-label" style="margin:0 16px 8px; display:block;">Exportar este dia</span>
+      <div class="day-actions">
+        <button class="btn-action" onclick="printDay()">🖨️ Gerar PDF</button>
+        <button class="btn-action" onclick="downloadJpeg(${day.day})">🖼️ Gerar imagem</button>
       </div>
     </section>
   `).join("");
@@ -412,8 +431,7 @@ function itemHtml(day, it){
   const timeAttrs = startMs ? `data-start="${startMs}" data-end="${endMs}"` : "";
   return `
     <div class="item" data-cat="${it.cat}" ${timeAttrs}>
-      <div class="time">${it.time}${it.end ? `<span>–${it.end}</span>`:""}</div>
-      <div class="dot" onclick="this.closest('.item').classList.toggle('done')" title="Marcar como concluído"><i></i></div>
+      <div class="time-badge" onclick="this.closest('.item').classList.toggle('done')" title="Toque para marcar como concluído">${it.time}${it.end ? `<small>–${it.end}</small>`:""}</div>
       <div class="content">
         <h3><span class="icon">${it.icon}</span>${it.title}</h3>
         ${it.desc ? `<p class="desc">${it.desc}</p>` : ""}
